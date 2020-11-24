@@ -1,0 +1,25 @@
+version: "3"
+
+volumes:
+  registry-data:
+
+networks:
+  backplane:
+    external: true
+
+services:
+  registry:
+    image: "registry:2"
+    environment:
+      - REGISTRY_HTTP_ADDR=0.0.0.0:5000
+      #- REGISTRY_HTTP_SECRET=1234
+      - REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io
+      #- REGISTRY_PROXY_USERNAME=DOCKER_HUB_USERNAME
+      #- REGISTRY_PROXY_PASSWORD=DOCKER_HUB_ACCESS_TOKEN
+    volumes:
+      - "registry-data:/var/lib/registry"
+    networks:
+      - backplane
+    labels:
+      - backplane.enabled=true
+      - traefik.http.services.registry.loadbalancer.server.port=5000
